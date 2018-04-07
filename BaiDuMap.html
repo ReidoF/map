@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>百度地图自定义标点显示信息</title>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+	<link rel="stylesheet" href="css/reset.css">
+
+	<script src="src/jquery.1.9.1.min.js"></script>
+	<!-- 百度地图 ak码 -->
+	<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=iFKGuI3MofzdaGgQVEzHIZxADlN9kePL"></script>
+	<!-- 引入百度地图 api -->
+	<script type="text/javascript" src="http://api.map.baidu.com/library/AreaRestriction/1.2/src/AreaRestriction_min.js"></script>
+	<style>
+		html,body {
+			height: 100%;
+		}
+		#container {
+			width: 100%;
+			height: 100%;
+		}
+		.wrap {
+			display: none;
+			position: absolute;
+			top: -20px;
+			left: 50px;
+			min-width: 220px;
+			max-width: 320px;
+			min-height: 200px;
+			/*padding: 15px;*/
+			border: 2px solid rgba(0,0,0,.5);
+			border-radius: 15px;
+			background: rgba(255,255,255,.8);
+			overflow: hidden;
+		}
+		.tt {
+			height: 40px;
+			line-height: 40px;
+			font-size: 20px;
+			font-weight: 600;
+			color: #fff;
+			text-align: center;
+			background: rgba(0,0,0,.5);
+		}
+		.ct {
+			padding: 10px;
+		}
+		.lst li {
+			list-style: none;
+			height: 30px;
+			line-height: 30px;
+			font-size: 16px;
+			font-weight: 600;
+			padding: 0;
+			color: #000;
+		}
+		#text {
+			position: fixed;
+			top: 20px;
+			left: 20px;
+			z-index: 999999;
+			width: 300px;
+			height: 100px;
+			line-height: 50px;
+			padding-left: 30px;
+			font-weight: 900;
+			color: #fff;
+			text-align: center;
+			background: rgba(0,0,0,.8);
+		}
+		#text span {
+			position: absolute;
+			top: 0;
+			left: 0;
+			display: inline-block;
+			width: 30px;
+			height: 100px;
+			line-height: 33px;
+			background: #000;
+		}
+
+	</style>
+</head>
+<body>
+	<div id="text"><p>mousemove</p><p>click</p><span>坐标值</span></div>
+	<div id="container"></div>
+	<script>
+	var timeOut=null;
+  var dataPool = [
+  {
+  	"point": [112.746206,27.056888],
+  	"backImg" : "img/center1.png",
+  	"num" : 1,
+  	"one" : 10,
+  	"two" : 40,
+  	"three" : 50,
+  	"four" : "2018-4-1",
+  	"five" : "2018-4-2",
+  	"tt" : "植树" 
+  },
+  {
+  	"point": [112.72744,27.05546],
+  	"backImg" : "img/center1.png",
+  	"num" : 2,
+  	"one" : 30,
+  	"two" : 30,
+  	"three" : 60,
+  	"four" : "2018-4-2",
+  	"five" : "2018-4-3",
+  	"tt" : "污水治理" 
+  },
+  {
+  	"point": [112.718529,27.069101],
+  	"backImg" : "img/center1.png",
+  	"num" : 3,
+  	"one" : 30,
+  	"two" : 40,
+  	"three" : 70,
+  	"four" : "2018-4-3",
+  	"five" : "2018-4-4",
+  	"tt" : "工厂拆迁" 
+  },
+  {
+  	"point": [112.701857,27.061187],
+  	"backImg" : "img/center1.png",
+  	"num" : 4,
+  	"one" : 30,
+  	"two" : 50,
+  	"three" : 80,
+  	"four" : "2018-4-4",
+  	"five" : "2018-4-5",
+  	"tt" : "耕田" 
+  },
+  {
+  	"point": [112.740951,27.082869],
+  	"backImg" : "img/center1.png",
+  	"num" : 5,
+  	"one" : 30,
+  	"two" : 50,
+  	"three" : 80,
+  	"four" : "2018-4-4",
+  	"five" : "2018-4-5",
+  	"tt" : "标题" 
+  },
+  {
+  	"point": [112.745622,27.038922],
+  	"backImg" : "img/center1.png",
+  	"num" : 6,
+  	"one" : 30,
+  	"two" : 50,
+  	"three" : 80,
+  	"four" : "2018-4-4",
+  	"five" : "2018-4-5",
+  	"tt" : "标题" 
+  },
+  {
+  	"point": [112.702719,27.077465],
+  	"backImg" : "img/center1.png",
+  	"num" : 7,
+  	"one" : 30,
+  	"two" : 50,
+  	"three" : 80,
+  	"four" : "2018-4-4",
+  	"five" : "2018-4-5",
+  	"tt" : "标题" 
+  },
+  {
+  	"point": [112.700707,27.041239],
+  	"backImg" : "img/center1.png",
+  	"num" : 8,
+  	"one" : 30,
+  	"two" : 50,
+  	"three" : 80,
+  	"four" : "2018-4-4",
+  	"five" : "2018-4-5",
+  	"tt" : "标题" 
+  },
+   {
+  	"point": [112.687268,26.952137],
+  	"backImg" : "img/center1.png",
+  	"num" : 9,
+  	"one" : 30,
+  	"two" : 50,
+  	"three" : 80,
+  	"four" : "2018-4-4",
+  	"five" : "2018-4-5",
+  	"tt" : "标题" 
+  },
+   {
+  	"point": [112.57286,26.977381],
+  	"backImg" : "img/center1.png",
+  	"num" : 10,
+  	"one" : 30,
+  	"two" : 50,
+  	"three" : 80,
+  	"four" : "2018-4-4",
+  	"five" : "2018-4-5",
+  	"tt" : "标题" 
+  },
+   {
+  	"point": [112.82726,26.949303],
+  	"backImg" : "img/center1.png",
+  	"num" : 11,
+  	"one" : 30,
+  	"two" : 50,
+  	"three" : 80,
+  	"four" : "2018-4-4",
+  	"five" : "2018-4-5",
+  	"tt" : "标题" 
+  },
+   {
+  	"point": [112.895963,27.041239],
+  	"backImg" : "img/center1.png",
+  	"num" : 12,
+  	"one" : 30,
+  	"two" : 50,
+  	"three" : 80,
+  	"four" : "2018-4-4",
+  	"five" : "2018-4-5",
+  	"tt" : "标题" 
+  },
+   {
+  	"point": [112.595569,27.086407],
+  	"backImg" : "img/center1.png",
+  	"num" : 13,
+  	"one" : 30,
+  	"two" : 50,
+  	"three" : 80,
+  	"four" : "2018-4-4",
+  	"five" : "2018-4-5",
+  	"tt" : "标题" 
+  },
+   {
+  	"point": [112.752809,26.994766],
+  	"backImg" : "img/center1.png",
+  	"num" : 14,
+  	"one" : 30,
+  	"two" : 50,
+  	"three" : 80,
+  	"four" : "2018-4-4",
+  	"five" : "2018-4-5",
+  	"tt" : "标题" 
+  },
+   {
+  	"point": [112.996285,26.945052],
+  	"backImg" : "img/center1.png",
+  	"num" : "15",
+  	"one" : 30,
+  	"two" : 50,
+  	"three" : 80,
+  	"four" : "2018-4-4",
+  	"five" : "2018-4-5",
+  	"tt" : "标题" 
+  },
+  ]
+	function container(dataPool){
+		//指定容器和限制地图缩放级别和底图点击
+		var map = new BMap.Map("container",{minZoom:13,maxZoom:19},{enableMapClick:false});
+		var top_right_control = new BMap.ScaleControl({anchor: BMAP_ANCHOR_TOP_RIGHT});// 左上角，添加比例尺
+		var top_right_navigation = new BMap.NavigationControl({anchor: BMAP_ANCHOR_TOP_RIGHT, type: BMAP_NAVIGATION_CONTROL_SMALL}); //右上角，仅包含平移和缩放按钮
+		map.addControl(top_right_control);
+		map.addControl(top_right_navigation);  
+		//初始化地图，设置中心点
+    map.centerAndZoom(new BMap.Point(112.741526,27.060962),15);
+    //启用地图滚轮放大缩小
+    map.enableScrollWheelZoom();  
+    //启用键盘上下左右键移动地图 
+    map.enableKeyboard();   
+    //限制地图移动范围       
+    var b = new BMap.Bounds(new BMap.Point(112.475088, 26.872825), new BMap.Point(113.025569, 27.174822));
+    try {
+      BMapLib.AreaRestriction.setBounds(map,b);
+    } catch (e) {
+      alert(e);
+    }
+
+    //获取点击的坐标
+    map.addEventListener("mousemove",function(e){
+    	$("#text > p:nth-child(1)").text(e.point.lng + "," + e.point.lat);
+		});
+		map.addEventListener("click",function(e){
+    	$("#text > p:nth-child(2)").text(e.point.lng + "," + e.point.lat);
+		});
+
+		//复杂的自定义覆盖物
+		//point 坐标值，backImg 图片,num 编号,one 已完成,two 未完成,three 总量,four 开始时间,five 预计完成时间,tt 标题
+		//复杂覆盖物构造函数
+		function ComplexCustomOverlay(point,backImg,num,one,two,three,four,five,tt) {
+			this._point = point;
+      this._backImg = backImg;
+      this._num = num;
+      this._one = one;
+      this._two = two;
+      this._three = three;
+      this._four = four;
+      this._five = five;
+      this._tt = tt;
+		}
+		//继承API的BMap.Overlay
+		ComplexCustomOverlay.prototype = new BMap.Overlay();
+	  // 实现初始化方法 
+		ComplexCustomOverlay.prototype.initialize = function(map){
+			// 保存map对象实例  
+			this._map = map;
+			//创建div元素，作为自定义覆盖物的容器
+			var div = this._div = document.createElement('div');
+
+      div.style.zIndex = BMap.Overlay.getZIndex(this._point.lat);
+      //设置标点图标
+      div.style.background = "url("+this._backImg+") no-repeat center center";
+      //禁止元素选择
+      div.style.MozUserSelect = "none";
+      //给父容器设置样式
+			$(div).css({
+				"position": "absolute",
+				"z-index": this._num,
+				"cursor": "pointer",
+				"height": "32",
+				"width": "30",
+				"white-space": "nowrap",
+				"margin": "0",
+				"padding": "0",
+				"color": "#fff",
+				"font-size": "14px"
+			});
+			//设置标识
+			$(div).attr({"num":this._num,"class":"boxbox"});
+			//创建自定义的信息提示框
+			var hidebox = document.createElement('div');
+			$(hidebox).css({
+				"width":"30",
+				"height":"30",
+				"line-height":"30px",
+				"margin":"0",
+				"padding":"0",
+				"color":"#000",
+				"font-weight": "900",
+				"text-align":"center",
+				"white-space":"nowrap"
+			});
+			//给标点加上编号
+			hidebox.innerHTML = this._num;
+			//信息框内容
+			var dom = '';
+			dom += '<div class="wrap">';
+			dom += '<div class="tt">'+this._tt+'</div>';
+			dom += '<div class="ct">';
+			dom += '<ul class="lst">';
+			dom += '<li><span>编号：</span>'+this._num+'<span></span></li>';
+			dom += '<li><span>已完成：</span>'+this._one+'<span></span></li>';
+			dom += '<li><span>未完成：</span>'+this._two+'<span></span></li>';
+			dom += '<li><span>总量：</span>'+this._three+'<span></span></li>';
+			dom += '<li><span>开始时间：</span>'+this._four+'<span></span></li>';
+			dom += '<li><span>预计完成时间：</span>'+this._five+'<span></span></li>';
+			dom += '</ul></div></div>';
+			$(div).append(dom);
+      div.appendChild(hidebox); 
+      //   滑入显示
+      $(div).mousemove(function(){
+        $(this).css("z-index","999999");
+        $(this).children(".wrap").show();
+      });
+      //  滑出隐藏
+      $(div).mouseout(function(){
+        $(this).css("z-index",$(this).attr("num"));
+        $(this).children(".wrap").hide();            
+      });
+
+
+     $(document).contextmenu(function(e){
+    //Get window size:
+    var winWidth = $(document).width();
+    var winHeight = $(document).height();
+    //Get pointer position:
+    var posX = e.pageX;
+    var posY = e.pageY;
+    //Get contextmenu size:
+    var menuWidth = $(".wrap").width();
+    var menuHeight = $(".wrap").height();
+    //Security margin:
+    var secMargin = 10;
+    //Prevent page overflow:
+    if(posX + menuWidth + secMargin >= winWidth
+    && posY + menuHeight + secMargin >= winHeight){
+      //Case 1: right-bottom overflow:
+      posLeft = posX - menuWidth - secMargin + "px";
+      posTop = posY - menuHeight - secMargin + "px";
+    }
+    else if(posX + menuWidth + secMargin >= winWidth){
+      //Case 2: right overflow:
+      posLeft = posX - menuWidth - secMargin + "px";
+      posTop = posY + secMargin + "px";
+    }
+    else if(posY + menuHeight + secMargin >= winHeight){
+      //Case 3: bottom overflow:
+      posLeft = posX + secMargin + "px";
+      posTop = posY - menuHeight - secMargin + "px";
+    }
+    else {
+      //Case 4: default values:
+      posLeft = posX + secMargin + "px";
+      posTop = posY + secMargin + "px";
+    };
+    //Display contextmenu:
+    
+    //Prevent browser default contextmenu.
+    return false;
+  });
+
+      //  将 div 添加到覆盖物容器中 
+      map.getPanes().labelPane.appendChild(div);  
+	     	//将div元素作为方法的返回值，当调用该覆盖物的show、  
+	      // hide方法，或者对覆盖物进行移除时，API都将操作此元素。   
+      	return div;
+    	};
+    	//  绘制覆盖物
+    	//  实现绘制方法
+    	ComplexCustomOverlay.prototype.draw = function(){
+	      // var map = this._map;
+    		// 根据地理坐标转换为像素坐标，并设置给容器
+	      var pixel = map.pointToOverlayPixel(this._point);
+	      // 标点悬浮位置
+	      this._div.style.left = pixel.x-15+ "px";
+	      this._div.style.top  = pixel.y-32+"px";
+    	};   
+    	var o = 1;   
+	    function posiPoint(){
+	    		//初始化第一个点
+	        var pointd = new BMap.Point(dataPool[o-1].point[0],dataPool[o-1].point[1]);
+	        // 将覆盖物信息添加到滴入中
+	        var myCompOverlayveh = new ComplexCustomOverlay(pointd,dataPool[o-1].backImg,dataPool[o-1].num,dataPool[o-1].one,dataPool[o-1].two,dataPool[o-1].three,dataPool[o-1].four,dataPool[o-1].five,dataPool[o-1].tt);
+	        map.addOverlay(myCompOverlayveh);
+
+	        o++;
+	        if(o-1<dataPool.length){
+	           timeOut=setTimeout(posiPoint,300);
+	        };
+	    };
+	    posiPoint(); 
+
+		};
+		container(dataPool);
+	</script>
+</body>
+</html>
